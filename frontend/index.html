@@ -1,0 +1,133 @@
+﻿<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EarthWave Listen to the Planet. Understand the Earth.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="css/style.css">
+</head><body>
+<header class="nav"><div class="navin">
+  <a class="brand" href="#home"><svg width="26" height="26" viewBox="0 0 32 32"><circle cx="16" cy="16" r="13" fill="none" stroke="#22D3EE" stroke-width="2"/><path d="M3 16h4l3-7 4 14 4-10 3 3h8" fill="none" stroke="#8B5CF6" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>EarthWave</span></a>
+  <nav id="menu">
+    <a href="#home" data-s="home">Home</a><a href="#explore" data-s="explore">Explore</a><a href="#studio" data-s="studio">Studio</a><a href="#science" data-s="science">NASA & Sound</a><a href="about.html" data-s="about">About</a>
+  </nav>
+  <div class="navact">
+    <button class="btn ghost" id="navHow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 5 6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg><span>How It Works</span></button>
+    <button class="btn primary" id="startBtn">Start Listening</button>
+    <a class="btn primary" href="studio.html" id="std-mnm">Create Your Planet's Sound</a>
+    <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><i></i><i></i><i></i></button>
+  </div>
+</div></header>
+<main>
+<section id="home" class="hero">
+  <div><p class="eyebrow">NASA Space Apps Challenge 2026</p>
+  <h1>Listen to the <em>Planet.</em></h1>
+  <p class="lead">Discover the hidden sounds of Earth through NASA scientific data.</p>
+  <div class="row"><button class="btn primary big" id="exploreBtn">Explore Earth</button><button class="btn big" id="howBtn">How It Works</button><button class="btn big" id="howBtnFr">Comment ça marche</button></div></div>
+  <div class="globewrap">
+    <div class="globe" id="globe"><div class="ring r1"></div><div class="ring r2"></div><div class="orb"></div><div class="bars" id="heroBars"></div></div>
+    <div class="caption" id="caption" aria-live="polite">Press How It Works (English) or Comment sa marche (Francais) and the planet will explain.</div>
+  </div>
+</section>
+
+<section id="explore">
+  <h2>Earth Explorer</h2>
+  <div class="grid2">
+    <div class="card">
+      <div class="row">
+        <input id="searchInput" placeholder="Search a city or place" aria-label="Search location">
+        <button class="btn primary" id="searchBtn">Search Location</button>
+        <button class="btn" id="resetBtn">Reset</button>
+      </div>
+      <div class="row"><label>Map type · NASA GIBS layer <select id="layerSelect"></select></label></div>
+      <div class="maphelp" aria-label="Map controls">
+        <span><kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd> Move around (click the map first)</span>
+        <span><kbd>Scroll</kbd> Zoom in and out</span>
+        <span><kbd>+</kbd><kbd>−</kbd> Zoom with the keyboard</span>
+        <span><kbd>Drag</kbd> Pan the map</span>
+        <span><kbd>Click</kbd> Select a location</span>
+        <span><kbd>Map type</kbd> Change it with the menu above</span>
+      </div>
+      <div id="map" aria-label="Interactive map"></div>
+      <small class="muted">Click the map to select a location. Satellite imagery: NASA GIBS (imagery only, not the numerical data). Base map © OpenStreetMap contributors.</small>
+    </div>
+    <div class="card" id="side">
+      <h3>Selected location</h3>
+      <ul class="info">
+        <li>Place <b id="locName">–</b></li><li>Latitude <b id="locLat">–</b></li><li>Longitude <b id="locLon">–</b></li>
+        <li>Period <b id="locPeriod">–</b></li><li>Data <b id="locStatus">–</b></li>
+      </ul>
+      <h3>Science data</h3>
+      <p class="muted small">Select one, or combine two or more to hear them together.</p>
+      <div class="params" id="params"></div>
+      <h3>Dates</h3>
+      <div class="row"><label>Start <input type="date" id="startDate"></label><label>End <input type="date" id="endDate"></label></div>
+      <button class="btn primary" id="applyDates">Apply Dates</button>
+    </div>
+  </div>
+
+  <div class="card" id="chartCard">
+    <div id="loading" class="overlay" hidden>Loading NASA data…</div>
+    <div id="errorBox" class="error" hidden><span id="errorMsg"></span> <button class="btn" id="retryBtn">Retry</button></div>
+    <h3 id="chartTitle">Data</h3>
+    <div class="row voicebar"><span class="muted">Voice explanation of this chart:</span><button class="btn" id="chartEn">Explain in English</button><button class="btn" id="chartFr">Expliquer en français</button></div>
+    <div class="caption" id="chartCaption" hidden></div>
+    <div class="chartWrap"><canvas id="chart"></canvas></div>
+    <div class="stats" id="stats"></div>
+    <p class="muted" id="sciText"></p>
+    <small class="muted" id="sourceLine"></small>
+  </div>
+</section>
+
+<section id="studio">
+  <h2>Sonification Studio</h2>
+  <div class="card">
+    <p class="muted">A scientific sonification: a sound generated from data values, not a recording of real sounds from Earth.</p>
+    <canvas id="wave" height="140"></canvas>
+    <div class="row meta"><span id="plParam">–</span><span id="plLoc">–</span><span id="plTime">0:00 / 0:00</span></div>
+    <input type="range" id="progress" min="0" max="1000" value="0" disabled aria-label="Progress">
+    <div class="row">
+      <button class="btn primary" id="playBtn">Play</button><button class="btn" id="pauseBtn">Pause</button><button class="btn" id="stopBtn">Stop</button>
+      <label>Volume <input type="range" id="volume" min="0" max="100" value="70"></label>
+      <label>Speed <select id="speed"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="1.5">1.5×</option><option value="2">2×</option></select></label>
+      <button class="btn glow" id="listenBtn">Listen to This Data</button>
+    </div>
+    <div id="mapText" class="muted"></div>
+  </div>
+</section>
+
+<section id="science">
+  <h2>From NASA to Sound</h2>
+  <p class="lead2">How a satellite measurement becomes something you can hear.</p>
+  <div class="flow">
+    <div class="card node"><span class="tag">1 · NASA</span><h3>Observe</h3><p>Satellites, ground stations and atmospheric models watch the Earth every day. NASA’s POWER project turns these observations into daily data for any point on the planet.</p></div>
+    <div class="arrow" aria-hidden="true">→</div>
+    <div class="card node"><span class="tag">2 · Weather</span><h3>Measure</h3><p>The data describe weather and climate variables: air temperature, rainfall, wind speed and the sunlight reaching the ground. Each one is a simple series of numbers, one per day.</p></div>
+    <div class="arrow" aria-hidden="true">→</div>
+    <div class="card node"><span class="tag">3 · Waves</span><h3>Sonify</h3><p>Sound is a wave. Its frequency sets the pitch, its amplitude the loudness, its shape the brightness, and its timing the rhythm. EarthWave maps each weather variable onto one of these properties.</p></div>
+  </div>
+  <div class="card tablecard"><table>
+    <thead><tr><th>Weather variable</th><th>NASA POWER parameter</th><th>Wave property</th><th>What you hear</th></tr></thead>
+    <tbody>
+    <tr><td>Temperature</td><td>T2M</td><td>Frequency</td><td>Warmer days sound higher</td></tr>
+    <tr><td>Precipitation</td><td>PRECTOTCORR</td><td>Rhythm</td><td>Dry days are silent, rainy days patter</td></tr>
+    <tr><td>Wind</td><td>WS2M</td><td>Amplitude</td><td>Stronger wind sounds louder</td></tr>
+    <tr><td>Solar radiation</td><td>ALLSKY_SFC_SW_DWN</td><td>Timbre</td><td>Sunnier days sound brighter</td></tr>
+    </tbody></table>
+    <p class="muted">Combine variables in the Explorer and they play together, each one as its own voice, so you can hear how temperature, rain, wind and sun move together over time.</p>
+  </div>
+</section>
+
+<section id="about"><h2>About EarthWave</h2>
+  <div class="card"><p>EarthWave is a prototype for the <b>NASA Space Apps Challenge 2026</b> challenge <b>“The Earth Information Jukebox”</b>. Its goal is to make Earth science data accessible through sight and sound.</p>
+  <p><b>Technologies:</b> Leaflet, Chart.js, Web Audio API, Web Speech API, Node.js, Express, node-cache.</p>
+  <p><b>Data sources:</b> numerical data from <a href="https://power.larc.nasa.gov/docs/" target="_blank" rel="noopener">NASA POWER</a> (daily, historical / near-real-time with a lag of several days, community RE); satellite imagery from <a href="https://nasa-gibs.github.io/gibs-api-docs/" target="_blank" rel="noopener">NASA GIBS</a>.</p>
+  <p class="muted">Attribution: NASA POWER data are provided by the NASA Langley Research Center POWER Project, funded through the NASA Earth Science / Applied Science Program. Imagery courtesy of NASA EOSDIS Global Imagery Browse Services (GIBS). This app is not endorsed by NASA.</p></div></section>
+</main>
+<div id="toasts"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script type="module" src="js/app.js"></script>
+</body></html>

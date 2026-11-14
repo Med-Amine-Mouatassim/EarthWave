@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Learn how EarthWave turns Earth science data into interactive sound experiences.">
+    <title>About EarthWave</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/about.css">
+  </head>
+  <body>
+    <header class="nav">
+      <div class="navin">
+        <a class="brand" href="index.html" aria-label="EarthWave home">
+          <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="#22D3EE" stroke-width="2"/><path d="M3 16h4l3-7 4 14 4-10 3 3h8" fill="none" stroke="#8B5CF6" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>EarthWave</span>
+        </a>
+        <nav class="about-nav" aria-label="Main navigation">
+          <a href="index.html" data-t="navHome">Home</a>
+          <a href="index.html#explore" data-t="navExplore">Explore</a>
+          <a href="studio.html" data-t="navStudio">Studio</a>
+          <a class="active" href="about.html" data-t="navAbout">About</a>
+        </nav>
+        <div class="language-switch" role="group" aria-label="Language">
+          <button type="button" data-lang="en" aria-pressed="true">EN</button>
+          <button type="button" data-lang="fr" aria-pressed="false">FR</button>
+        </div>
+      </div>
+    </header>
+
+    <main id="aboutContent" class="about-main" tabindex="-1"></main>
+    <footer class="about-footer">
+      <a class="brand" href="index.html">EarthWave</a>
+      <p data-t="slogan">Listen to the Planet. Understand the Earth.</p>
+      <nav aria-label="Footer">
+        <a href="about.html" data-t="navAbout">About</a>
+        <a href="index.html#explore" data-t="navExplore">Earth Explorer</a>
+        <a href="studio.html" data-t="navStudio">EarthWave Studio</a>
+      </nav>
+      <p class="muted small">NASA Space Apps Challenge 2026 · Independent educational project; not endorsed by NASA.</p>
+    </footer>
+    <script type="module" src="js/about.js"></script>
+  </body>
+</html>
