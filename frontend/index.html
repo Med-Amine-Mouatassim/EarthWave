@@ -35,11 +35,11 @@
   <h2>Earth Explorer</h2>
   <div class="grid2">
     <div class="card">
-      <div class="row">
-        <input id="searchInput" placeholder="Search a city or place" aria-label="Search location">
-        <button class="btn primary" id="searchBtn" aria-live="polite" aria-busy="false">Search Location</button>
-        <button class="btn" id="resetBtn">Reset</button>
-      </div>
+      <form class="row location-search" id="locationSearch" role="search">
+        <input id="searchInput" type="search" name="q" placeholder="Search a city or place" aria-label="Search location" autocomplete="off" enterkeyhint="search">
+        <button class="btn primary" id="searchBtn" type="submit" aria-live="polite" aria-busy="false">Search Location</button>
+        <button class="btn" id="resetBtn" type="button">Reset</button>
+      </form>
       <div class="row"><label>Map type · NASA GIBS layer <select id="layerSelect"></select></label></div>
       <div class="maphelp" aria-label="Map controls">
         <span><kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd> Move around (click the map first)</span>

@@ -156,8 +156,10 @@ function wire() {
   $('chartFr').onclick = () => speakChart('fr');
   $('burger').onclick = () => { const o = $('menu').classList.toggle('open'); $('burger').setAttribute('aria-expanded', o); };
   $('menu').onclick = (e) => e.target.closest('a') && $('menu').classList.remove('open');
-  $('searchBtn').onclick = search;
-  $('searchInput').onkeydown = (e) => e.key === 'Enter' && search();
+  $('locationSearch').addEventListener('submit', (event) => {
+    event.preventDefault();
+    search();
+  });
   $('applyDates').onclick = () => { son.stopSonification(); load(); };
   $('retryBtn').onclick = load;
   $('layerSelect').onchange = () => setGibsLayer($('layerSelect').value, $('endDate').value);

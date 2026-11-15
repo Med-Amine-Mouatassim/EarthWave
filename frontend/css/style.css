@@ -51,7 +51,7 @@ section{max-width:1200px;margin:0 auto;padding:4.5rem 1.25rem}
 .grid2{display:grid;grid-template-columns:2fr 1fr;gap:1rem}
 #map{height:480px;border-radius:12px;margin:.5rem 0}
 input,select{background:var(--bg);color:var(--tx);border:1px solid #ffffff26;border-radius:10px;padding:.5rem;font:inherit}
-#searchInput{flex:1;min-width:160px}label{color:var(--tx2);font-size:.9rem;display:flex;gap:.4rem;align-items:center}
+#searchInput{flex:1;min-width:160px;position:relative;z-index:1;pointer-events:auto;user-select:text;-webkit-user-select:text}label{color:var(--tx2);font-size:.9rem;display:flex;gap:.4rem;align-items:center}
 #searchBtn[aria-busy="true"]::before{content:"";width:14px;height:14px;border:2px solid #ffffff65;border-top-color:#fff;border-radius:50%;animation:search-spin .7s linear infinite}
 @keyframes search-spin{to{transform:rotate(360deg)}}
 .info{list-style:none;padding:0;margin:0}.info li{display:flex;justify-content:space-between;gap:.5rem;padding:.2rem 0;color:var(--tx2)}.info b{color:var(--tx);text-align:right;font-weight:500;max-width:65%}
