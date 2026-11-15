@@ -1,0 +1,9 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "earthwave-api",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-11-15",
+  "vars": {
+    "ALLOWED_ORIGIN": "https://earthwave.pages.dev"
+  }
+}
