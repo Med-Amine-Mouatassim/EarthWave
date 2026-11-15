@@ -1,12 +1,15 @@
-const NodeCache = require('node-cache');
-const cache = new NodeCache({ stdTTL: Number(process.env.CACHE_TTL_SECONDS) || 3600 });
+// Small isolate-local fallback for local Express development. On Workers the
+// HTTP handler also uses the platform Cache API, which is shared by data center.
+const cache = new Map();
+const cacheTtl = Math.max(1, Number(typeof process !== 'undefined' && process.env?.CACHE_TTL_SECONDS) || 3600) * 1000;
 const BASE = 'https://power.larc.nasa.gov/api/temporal/daily/point';
 
 // Fetch daily point data from NASA POWER and return a clean structure.
 async function getPowerData({ latitude, longitude, start, end, parameters }) {
   const key = [latitude, longitude, start, end, parameters.join()].join('|');
   const hit = cache.get(key);
-  if (hit) return hit;
+  if (hit && hit.expiresAt > Date.now()) return hit.value;
+  if (hit) cache.delete(key);
 
   const url = new URL(BASE);
   url.search = new URLSearchParams({
@@ -45,7 +48,8 @@ async function getPowerData({ latitude, longitude, start, end, parameters }) {
     source: 'NASA POWER (Prediction Of Worldwide Energy Resources), community RE',
     temporalResolution: 'daily', retrievedAt: new Date().toISOString(),
   };
-  cache.set(key, out);
+  if (cache.size >= 100) cache.delete(cache.keys().next().value);
+  cache.set(key, { value: out, expiresAt: Date.now() + cacheTtl });
   return out;
 }
 module.exports = { getPowerData };

@@ -2,7 +2,14 @@
 const PARAMETERS = ['T2M', 'PRECTOTCORR', 'WS2M', 'ALLSKY_SFC_SW_DWN'];
 const MAX_DAYS = 366; // keeps requests fast and sonifications a sensible length
 
-const toDate = (s) => new Date(`${s.slice(0, 4)}-${s.slice(4, 6)}-${s.slice(6, 8)}T00:00:00Z`);
+const toDate = (s) => {
+  if (!/^\d{8}$/.test(s || '')) return new Date(NaN);
+  const year = Number(s.slice(0, 4)), month = Number(s.slice(4, 6)), day = Number(s.slice(6, 8));
+  const date = new Date(Date.UTC(year, month - 1, day));
+  return date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day
+    ? date
+    : new Date(NaN);
+};
 
 function validate(q, multiple = false) {
   const latitude = Number(q.latitude), longitude = Number(q.longitude);

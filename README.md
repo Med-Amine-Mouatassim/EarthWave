@@ -229,3 +229,55 @@ Node.js
 npm
 
 Git
+
+### Backend local
+
+From `server/`, install the backend packages and run the Express development server:
+
+```sh
+npm install
+npm start
+```
+
+It listens at `http://localhost:3000`. `.env` is only used by the local Express server; do not commit it. `CACHE_TTL_SECONDS` is optional and defaults to 3600.
+
+### Cloudflare Workers deployment
+
+The API Worker lives in `server/src/worker.js`; it does not serve static files. Cloudflare Pages continues to host the files in `frontend/`. Wrangler is a development dependency of the backend.
+
+Before deploying, update the two URL placeholders:
+
+1. In `server/wrangler.jsonc`, set `vars.ALLOWED_ORIGIN` to the exact production Pages origin, including `https://` and no trailing slash (for example `https://earthwave.pages.dev`). This is the only production origin allowed by CORS; localhost origins are allowed for local development.
+2. In `frontend/js/config.js`, set the production `API_BASE_URL` to the deployed Worker URL (for example `https://earthwave-api.<your-workers-subdomain>.workers.dev`). Local pages served on `localhost` or `127.0.0.1` use `http://localhost:3000` automatically.
+
+Then run these commands from `server/`:
+
+```sh
+npm install
+npm run dev:worker
+npm run deploy
+```
+
+`npm run dev:worker` starts Wrangler's local Worker preview. `npm run deploy` deploys using the account already authenticated with Wrangler. First-time setup requires `npx wrangler login` in a browser and your approval; no account action was performed as part of this code change. Wrangler prints the final `workers.dev` URL after deployment. Copy it into `frontend/js/config.js`, then publish the frontend directory to Cloudflare Pages.
+
+No secrets or API keys are required for the current NASA POWER, Nominatim, or Open-Meteo endpoints. If credentials are added later, store them with `npx wrangler secret put NAME`; never put them in `vars`, source files, or `.env` committed to Git.
+
+The Worker handles the same five GET endpoints and JSON payloads, applies the existing request validation, answers preflight `OPTIONS`, and allows only the configured Pages origin plus localhost development origins. Successful NASA data responses use Cloudflare's data-center Cache API for one hour; cache contents are best effort and are not globally replicated. The local Express server keeps its own bounded in-memory cache.
+
+### Local API checks
+
+With the local server running, check health and validation responses:
+
+```sh
+curl "http://localhost:3000/api/health"
+curl -i "http://localhost:3000/api/earth-data?latitude=91&longitude=0&start=20260101&end=20260102&parameter=T2M"
+curl -i -X OPTIONS "http://localhost:3000/api/health" -H "Origin: http://localhost:5500" -H "Access-Control-Request-Method: GET"
+```
+
+To smoke-test the Worker routes locally, use `npm run dev:worker` and replace port `8787` below as Wrangler reports:
+
+```sh
+curl "http://localhost:8787/api/health"
+curl -i "http://localhost:8787/api/earth-data?latitude=91&longitude=0&start=20260101&end=20260102&parameter=T2M"
+curl -i -X OPTIONS "http://localhost:8787/api/health" -H "Origin: http://localhost:5500" -H "Access-Control-Request-Method: GET"
+```
