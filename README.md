@@ -10,7 +10,7 @@ EarthWave connects science, technology, geography, and sound to make environment
 
 By combining NASA environmental datasets, geographic exploration, geological characteristics, and audio synthesis, the platform creates unique soundscapes inspired by Earth's conditions.
 
-✨ Main Features
+✨ Main Features :
 
 🌎 1. Earth Explorer
 
