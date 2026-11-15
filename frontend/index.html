@@ -37,7 +37,7 @@
     <div class="card">
       <div class="row">
         <input id="searchInput" placeholder="Search a city or place" aria-label="Search location">
-        <button class="btn primary" id="searchBtn">Search Location</button>
+        <button class="btn primary" id="searchBtn" aria-live="polite" aria-busy="false">Search Location</button>
         <button class="btn" id="resetBtn">Reset</button>
       </div>
       <div class="row"><label>Map type · NASA GIBS layer <select id="layerSelect"></select></label></div>
@@ -125,9 +125,11 @@
   <p><b>Data sources:</b> numerical data from <a href="https://power.larc.nasa.gov/docs/" target="_blank" rel="noopener">NASA POWER</a> (daily, historical / near-real-time with a lag of several days, community RE); satellite imagery from <a href="https://nasa-gibs.github.io/gibs-api-docs/" target="_blank" rel="noopener">NASA GIBS</a>.</p>
   <p class="muted">Attribution: NASA POWER data are provided by the NASA Langley Research Center POWER Project, funded through the NASA Earth Science / Applied Science Program. Imagery courtesy of NASA EOSDIS Global Imagery Browse Services (GIBS). This app is not endorsed by NASA.</p></div></section>
 </main>
+<footer id="siteFooter" class="site-footer"></footer>
 <div id="toasts"></div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script type="module" src="js/footer.js"></script>
 <script type="module" src="js/app.js"></script>
 </body></html>

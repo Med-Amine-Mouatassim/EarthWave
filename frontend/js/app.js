@@ -20,6 +20,8 @@ const DEFAULT = { lat: 33.5731, lon: -7.5898, name: 'Casablanca, Morocco' };
 // POWER data lags real time by days, so the default period ends ~10 days ago.
 const defEnd = () => iso(new Date(Date.now() - 10 * 864e5)), defStart = () => iso(new Date(Date.now() - 40 * 864e5));
 const state = { ...DEFAULT, params: ['T2M'], data: null, layers: null };
+let dataRequestId = 0;
+let searchInProgress = false;
 
 // ---- Parameter cards (multi-select: combine 2 or more)
 function buildParams() {
@@ -46,14 +48,16 @@ async function selectLocation(lat, lon, name, zoom) {
 
 // ---- Data loading (location + parameters + dates)
 async function load() {
+  const requestId = ++dataRequestId;
   const start = $('startDate').value, end = $('endDate').value;
   const msg = validateDates(start, end);
-  if (msg) { showError(msg); toast(msg, 'error'); return; }
+  if (msg) { setLoading(false); showError(msg); toast(msg, 'error'); return; }
   stopNarration(); setLoading(true); showError('');
   setText('locPeriod', `${start} → ${end}`); setText('locStatus', 'Loading…');
   setGibsLayer($('layerSelect').value, end);
   try {
     const d = await fetchEarthData({ latitude: state.lat, longitude: state.lon, start: compact(start), end: compact(end), parameters: state.params.join(',') });
+    if (requestId !== dataRequestId) return;
     const empty = state.params.filter((p) => !d.series[p].values.some((v) => v != null));
     if (empty.length) throw new Error(`NASA POWER returned no valid values for ${empty.map((p) => PARAMS[p].label).join(', ')} in this place and period.`);
     state.data = d;
@@ -69,8 +73,9 @@ async function load() {
     $('mapText').innerHTML = '<ul>' + state.params.map((p) => `<li>${son.MAPPINGS[p]}</li>`).join('') + '</ul>' + (state.params.length > 1 ? '<p>Combined: each parameter plays as its own voice at the same time, and the overall level is balanced automatically.</p>' : '');
     setText('plTime', `0:00 / ${fmtTime(d.dates.length * 0.3 / Number($('speed').value))}`);
   } catch (e) {
+    if (requestId !== dataRequestId) return;
     state.data = null; state.layers = null; showError(e.message); setText('locStatus', 'Unavailable'); toast(e.message, 'error');
-  } finally { setLoading(false); }
+  } finally { if (requestId === dataRequestId) setLoading(false); }
 }
 function validateDates(s, e) {
   if (!s || !e) return 'Please choose both a start and an end date.';
@@ -123,14 +128,23 @@ function speakChart(lang) {
 
 // ---- Search
 async function search() {
+  if (searchInProgress) return;
   const q = $('searchInput').value.trim(); if (q.length < 2) return toast('Type a city or place name.');
-  const b = $('searchBtn'); b.disabled = true; b.textContent = 'Searching…';
+  const b = $('searchBtn');
+  searchInProgress = true;
+  b.disabled = true; b.setAttribute('aria-busy', 'true'); b.textContent = 'Searching…';
   try {
     const r = await geocode(q);
     if (!r) toast(`No location found for “${q}”.`, 'error');
-    else { toast('Found: ' + r.name.split(',').slice(0, 2).join(','), 'success'); await selectLocation(r.lat, r.lon, r.name, 7); }
+    else {
+      const lat = Number(r.lat), lon = Number(r.lon);
+      if (!Number.isFinite(lat) || lat < -90 || lat > 90 || !Number.isFinite(lon) || lon < -180 || lon > 180)
+        throw new Error('The location service returned invalid coordinates. Please try another place.');
+      toast('Found: ' + r.name.split(',').slice(0, 2).join(','), 'success');
+      await selectLocation(lat, lon, r.name, 7);
+    }
   } catch (e) { toast(e.message, 'error'); }
-  finally { b.disabled = false; b.textContent = 'Search Location'; }
+  finally { searchInProgress = false; b.disabled = false; b.setAttribute('aria-busy', 'false'); b.textContent = 'Search Location'; }
 }
 
 function wire() {

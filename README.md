@@ -239,7 +239,7 @@ npm install
 npm start
 ```
 
-It listens at `http://localhost:3000`. `.env` is only used by the local Express server; do not commit it. `CACHE_TTL_SECONDS` is optional and defaults to 3600.
+It listens at `http://localhost:3000`. For the frontend's configured local API, use `npm run dev:worker` (Wrangler listens at `http://localhost:8787`). `.env` is only used by the local Express server; do not commit it. `CACHE_TTL_SECONDS` is optional and defaults to 3600.
 
 ### Cloudflare Workers deployment
 
@@ -248,7 +248,7 @@ The API Worker lives in `server/src/worker.js`; it does not serve static files. 
 Before deploying, update the two URL placeholders:
 
 1. In `server/wrangler.jsonc`, set `vars.ALLOWED_ORIGIN` to the exact production Pages origin, including `https://` and no trailing slash (for example `https://earthwave.pages.dev`). This is the only production origin allowed by CORS; localhost origins are allowed for local development.
-2. In `frontend/js/config.js`, set the production `API_BASE_URL` to the deployed Worker URL (for example `https://earthwave-api.<your-workers-subdomain>.workers.dev`). Local pages served on `localhost` or `127.0.0.1` use `http://localhost:3000` automatically.
+2. In `frontend/js/config.js`, set the production `API_BASE_URL` to the deployed Worker URL. Local pages served on `localhost` or `127.0.0.1` use `http://localhost:8787` automatically.
 
 Then run these commands from `server/`:
 
